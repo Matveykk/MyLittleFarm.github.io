@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Secret files ###
+D:\Программирование\Проекты java\TelegramMiniApp\src\main\resources\bot.properties
