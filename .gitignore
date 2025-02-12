@@ -38,4 +38,5 @@ build/
 .DS_Store
 
 ### Secret file ###
-/src/main/java/resourcesUtil/*.properties
+/src/main/resources/bot.properties
+/src/main/java/botClient/Test.java
