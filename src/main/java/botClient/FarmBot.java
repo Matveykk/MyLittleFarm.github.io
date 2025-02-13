@@ -1,6 +1,5 @@
 package botClient;
 
-// Импортируем необходимые классы из библиотеки TelegramBots
 import org.json.JSONObject;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -9,12 +8,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import resourcesUtil.PropertiesUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-// Основной класс бота, который наследует TelegramLongPollingBot
+// Основной класс бота
 public class FarmBot extends TelegramLongPollingBot {
 
     private static final String BOT_TOKEN = "bot.token";
@@ -39,6 +37,18 @@ public class FarmBot extends TelegramLongPollingBot {
             }
         }
 
+        if (update.hasCallbackQuery()) {
+            long chatId = update.getCallbackQuery().getMessage().getChatId();
+            String callbackData = update.getCallbackQuery().getData();
+
+            if (callbackData.equals("START_BUTTON")) {
+                sendMessage(chatId);
+            } else if (callbackData.equals("HELP_BUTTON")) {
+                sendHelpMessage(chatId);
+            } else if (callbackData.equals("APP_BUTTON")) {
+                //Ничего
+            }
+        }
 
 
         if (update.hasMessage() && update.getMessage().getWebAppData() != null) {
@@ -80,17 +90,12 @@ public class FarmBot extends TelegramLongPollingBot {
         }
     }
 
-
-    //        button.setUrl("https://matveykk.github.io/MyLittleFarm.github.io/");
-
-    //todo сделать метод чтобы кнопка открытия приложения была сбоку ввода сообщения
-
     // Метод для отправки сообщения с помощью
     private void sendHelpMessage(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        message.setText("Это простой бот-пример. Доступные команды:\n\"Информация\" - информация о боте\n\"Открыть мини-приложение\" - " +
-                "открыть мини-приложение\n\"Помощь\" - посмотреть информацию о боте"); // Текст сообщения
+        setKeyboardUnderMessage(chatId, message);
+        message.setText("In process...");
 
         try {
             execute(message);
@@ -124,7 +129,7 @@ public class FarmBot extends TelegramLongPollingBot {
         InlineKeyboardButton button3 = new InlineKeyboardButton();
 
         button1.setText("Launch App");
-        button1.setUrl("https://matveykk.github.io/MyLittleFarm.github.io/");
+        button1.setUrl("t.me/my_little_farmm_bot/myLittleFarm");
         button1.setCallbackData("APP_BUTTON");
 
         button2.setText("/help");
