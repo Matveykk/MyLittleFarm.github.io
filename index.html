@@ -1,47 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Mini App</title>
+    <title>Интерактивные вкладки</title>
     <style>
+        /* Основные стили */
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .tabs {
+            width: 80%;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .tab-header {
+            display: flex;
+            background-color: #007bff;
+        }
+
+        .tab-header button {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            color: #fff;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .tab-header button:hover {
+            background-color: #0056b3;
+        }
+
+        .tab-header button.active {
+            background-color: #0056b3;
+        }
+
+        .tab-content {
             padding: 20px;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-<h1>Привет, это мини-приложение!</h1>
-<p>Нажмите кнопку, чтобы отправить сообщение боту:</p>
-<button onclick="sendData()">Отправить данные</button>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<div class="tabs">
+    <!-- Заголовки вкладок -->
+    <div class="tab-header">
+        <button class="tab-button active" data-tab="tab1">Вкладка 1</button>
+        <button class="tab-button" data-tab="tab2">Вкладка 2</button>
+        <button class="tab-button" data-tab="tab3">Вкладка 3</button>
+    </div>
+
+    <!-- Содержимое вкладок -->
+    <div class="tab-content">
+        <div id="tab1" class="tab-pane active">
+            <h2>Содержимое вкладки 1</h2>
+            <p>Это текст первой вкладки. Здесь может быть любая информация.</p>
+        </div>
+        <div id="tab2" class="tab-pane">
+            <h2>Содержимое вкладки 2</h2>
+            <p>Это текст второй вкладки. Здесь может быть что-то другое.</p>
+        </div>
+        <div id="tab3" class="tab-pane">
+            <h2>Содержимое вкладки 3</h2>
+            <p>Это текст третьей вкладки. И здесь тоже что-то интересное.</p>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Инициализация Telegram Web App
-    const tg = window.Telegram.WebApp;
+    // JavaScript для переключения вкладок
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanes = document.querySelectorAll('.tab-pane');
 
-    // Функция для отправки данных боту
-    function sendData() {
-        const data = {
-            message: "Привет от мини-приложения!"
-        };
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Убираем активный класс у всех кнопок и вкладок
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanes.forEach(pane => pane.classList.remove('active'));
 
-        // Отправляем данные боту через Telegram API
-        tg.sendData(JSON.stringify(data));
-
-    }
-
-    // Показываем кнопку Закрыть в интерфейсе
-    tg.MainButton.setText("Закрыть");
-    tg.MainButton.show();
-    tg.MainButton.onClick(() => tg.close());
+            // Добавляем активный класс к выбранной кнопке и вкладке
+            button.classList.add('active');
+            const tabId = button.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
 </script>
+
 </body>
 </html>
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Telegram Mini App</title>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            text-align: center;-->
+<!--            padding: 20px;-->
+<!--        }-->
+<!--        button {-->
+<!--            padding: 10px 20px;-->
+<!--            font-size: 16px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Привет, это мини-приложение!</h1>-->
+<!--<p>Нажмите кнопку, чтобы отправить сообщение боту:</p>-->
+<!--<button onclick="sendData()">Отправить данные</button>-->
+
+<!--<script src="https://telegram.org/js/telegram-web-app.js"></script>-->
+<!--<script>-->
+<!--    // Инициализация Telegram Web App-->
+<!--    const tg = window.Telegram.WebApp;-->
+
+<!--    // Функция для отправки данных боту-->
+<!--    function sendData() {-->
+<!--        const data = {-->
+<!--            message: "Привет от мини-приложения!"-->
+<!--        };-->
+
+<!--        // Отправляем данные боту через Telegram API-->
+<!--        tg.sendData(JSON.stringify(data));-->
+
+<!--    }-->
+
+<!--    // Показываем кнопку Закрыть в интерфейсе-->
+<!--    tg.MainButton.setText("Закрыть");-->
+<!--    tg.MainButton.show();-->
+<!--    tg.MainButton.onClick(() => tg.close());-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
