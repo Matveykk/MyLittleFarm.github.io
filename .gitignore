@@ -39,4 +39,5 @@ build/
 
 ### Secret file ###
 /src/main/resources/bot.properties
+/src/main/resources/dataBase.properties
 /src/main/java/botClient/Test.java

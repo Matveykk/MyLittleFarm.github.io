@@ -32,6 +32,7 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
+            text-align: center;
         }
 
         .tab-pane {
@@ -69,6 +70,35 @@
             background-color: #0056b3;
         }
 
+        /* Стили для кнопки и счетчика */
+        .carrot-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .carrot-button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .carrot-counter {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .timer {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #333;
+        }
+
         /* Адаптация под телефон */
         @media (max-width: 600px) {
             .tab-header button {
@@ -79,6 +109,19 @@
             .tab-content {
                 padding: 10px;
             }
+
+            .carrot-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+
+            .carrot-counter {
+                font-size: 20px;
+            }
+
+            .timer {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -88,16 +131,19 @@
     <!-- Содержимое вкладок -->
     <div class="tab-content">
         <div id="tab1" class="tab-pane active">
-            <h2>Содержимое вкладки 1</h2>
-            <p>Это текст первой вкладки. Здесь может быть любая информация.</p>
+            <h2>Ферма</h2>
+            <p>Нажмите кнопку, чтобы вырастить морковку!</p>
+            <button class="carrot-button" id="growButton">Вырастить морковку</button>
+            <div class="timer" id="timer">Осталось: 10 сек.</div>
         </div>
         <div id="tab2" class="tab-pane">
-            <h2>Содержимое вкладки 2</h2>
-            <p>Это текст второй вкладки. Здесь может быть что-то другое.</p>
+            <h2>Хранилище</h2>
+            <p>Здесь хранятся ваши морковки.</p>
+            <div class="carrot-counter" id="carrotCounter">Морковок: 0</div>
         </div>
         <div id="tab3" class="tab-pane">
-            <h2>Содержимое вкладки 3</h2>
-            <p>Это текст третьей вкладки. И здесь тоже что-то интересное.</p>
+            <h2>Настройки</h2>
+            <p>Настройте приложение под свои нужды.</p>
         </div>
     </div>
 
@@ -109,7 +155,7 @@
     </div>
 </div>
 
-<script>
+<script src="https://telegram.org/js/telegram-web-app.js">
     // JavaScript для переключения вкладок
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -125,6 +171,44 @@
             const tabId = button.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
         });
+    });
+
+    // Логика для выращивания морковки
+    const growButton = document.getElementById('growButton');
+    const timerDisplay = document.getElementById('timer');
+    const carrotCounter = document.getElementById('carrotCounter');
+    let carrotCount = 0;
+    let timer = 10;
+    let intervalId = null;
+    const tg = window.Telegram.WebApp;
+
+    growButton.addEventListener('click', () => {
+        // Отключаем кнопку на время отсчета
+        growButton.disabled = true;
+        growButton.textContent = "Идёт выращивание...";
+
+        // Запускаем обратный отсчет
+        intervalId = setInterval(() => {
+            timer--;
+            timerDisplay.textContent = `Осталось: ${timer} сек.`;
+
+            // Когда отсчет завершен
+            if (timer <= 0) {
+                clearInterval(intervalId);
+                timerDisplay.textContent = "Морковка готова!";
+                growButton.textContent = "Вырастить морковку";
+                growButton.disabled = false;
+
+                // Увеличиваем счетчик морковок
+                carrotCount++;
+                carrotCounter.textContent = `Морковок: ${carrotCount}`;
+
+                // Сбрасываем таймер
+                timer = 10;
+
+                tg.sendData(carrotCount)
+            }
+        }, 1000);
     });
 </script>
 
