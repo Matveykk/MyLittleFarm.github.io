@@ -24,6 +24,21 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-content {
+            flex: 1;
+            padding: 40%;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
         }
 
         .tab-header {
@@ -49,30 +64,11 @@
         .tab-header button.active {
             background-color: #0056b3;
         }
-
-        .tab-content {
-            padding: 20px;
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
     </style>
 </head>
 <body>
 
 <div class="tabs">
-    <!-- Заголовки вкладок -->
-    <div class="tab-header">
-        <button class="tab-button active" data-tab="tab1">Farm</button>
-        <button class="tab-button" data-tab="tab2">Storage</button>
-        <button class="tab-button" data-tab="tab3">Settings</button>
-    </div>
-
     <!-- Содержимое вкладок -->
     <div class="tab-content">
         <div id="tab1" class="tab-pane active">
@@ -87,6 +83,13 @@
             <h2>Содержимое вкладки 3</h2>
             <p>Это текст третьей вкладки. И здесь тоже что-то интересное.</p>
         </div>
+    </div>
+
+    <!-- Заголовки вкладок (теперь внизу) -->
+    <div class="tab-header">
+        <button class="tab-button active" data-tab="tab1">Farm</button>
+        <button class="tab-button" data-tab="tab2">Storage</button>
+        <button class="tab-button" data-tab="tab3">Settings</button>
     </div>
 </div>
 
