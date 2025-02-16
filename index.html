@@ -155,7 +155,7 @@
     </div>
 </div>
 
-<script src="https://telegram.org/js/telegram-web-app.js">
+<script>
     // JavaScript для переключения вкладок
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -180,7 +180,6 @@
     let carrotCount = 0;
     let timer = 10;
     let intervalId = null;
-    const tg = window.Telegram.WebApp;
 
     growButton.addEventListener('click', () => {
         // Отключаем кнопку на время отсчета
@@ -206,6 +205,7 @@
                 // Сбрасываем таймер
                 timer = 10;
 
+                let tg = window.Telegram.WebApp;
                 tg.sendData(carrotCount)
             }
         }, 1000);
