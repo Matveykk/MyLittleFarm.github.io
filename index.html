@@ -12,25 +12,26 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             height: 100vh;
         }
 
         .tabs {
-            width: 100%;
-            max-width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            width: 100%;
+            max-width: 100%;
         }
 
         .tab-content {
             flex: 1;
-            padding: 21.9%;
+            padding: 20px;
+            overflow-y: auto;
         }
 
         .tab-pane {
@@ -44,6 +45,9 @@
         .tab-header {
             display: flex;
             background-color: #007bff;
+            position: sticky;
+            bottom: 0;
+            width: 100%;
         }
 
         .tab-header button {
@@ -63,6 +67,18 @@
 
         .tab-header button.active {
             background-color: #0056b3;
+        }
+
+        /* Адаптация под телефон */
+        @media (max-width: 600px) {
+            .tab-header button {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .tab-content {
+                padding: 10px;
+            }
         }
     </style>
 </head>
