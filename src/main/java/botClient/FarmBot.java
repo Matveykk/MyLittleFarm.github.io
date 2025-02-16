@@ -1,13 +1,16 @@
 package botClient;
 
-import org.json.JSONObject;
+import DataBaseWork.WorkWithDB;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import resourcesUtil.PropertiesUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,7 +21,6 @@ public class FarmBot extends TelegramLongPollingBot {
     private static final String BOT_TOKEN = "bot.token";
     private static final String BOT_USERNAME = "bot.username";
 
-    // Метод, который вызывается при получении нового сообщения от пользователя
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -46,26 +48,22 @@ public class FarmBot extends TelegramLongPollingBot {
             } else if (callbackData.equals("HELP_BUTTON")) {
                 sendHelpMessage(chatId);
             } else if (callbackData.equals("APP_BUTTON")) {
-                //Ничего
+                // Ничего
             }
         }
 
-
+        // Обработка данных из веб-приложения
         if (update.hasMessage() && update.getMessage().getWebAppData() != null) {
-            String data = update.getMessage().getWebAppData().toString();
+            String webAppData = update.getMessage().getWebAppData().getData(); // Получаем данные
             long chatId = update.getMessage().getChatId();
 
-            JSONObject json = new JSONObject(data);
-            String message = json.getString("message");
-
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(chatId);
-            sendMessage.setText(message);
-
+            // Обработка данных (пример: парсим JSON)
             try {
-                execute(sendMessage);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+                // Предположим, что данные приходят в формате JSON: {"carrots": 5}
+                int carrotCount = Integer.parseInt(webAppData.split(":")[1].replace("}", "").trim());
+                sendMessage(chatId, "Вы вырастили " + carrotCount + " морковок!");
+            } catch (Exception e) {
+                sendMessage(chatId, "Ошибка обработки данных: " + e.getMessage());
             }
         }
     }
@@ -81,7 +79,6 @@ public class FarmBot extends TelegramLongPollingBot {
                 "Welcome to the Farm!\nIf you need some - /help\nOne more message - /start",
                 "Hello! Let's farm some wheat\nIf you need some - /help\nOne more message - /start"};
         message.setText(Answers[random.nextInt(Answers.length)]);
-
 
         try {
             execute(message);
@@ -117,7 +114,20 @@ public class FarmBot extends TelegramLongPollingBot {
         }
     }
 
-    //Метод для создания клавиатуры под сообщением
+    // Метод для отправки сообщения с данными из веб-приложения
+    private void sendMessage(long chatId, String text) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(text);
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Метод для создания клавиатуры под сообщением
     private void setKeyboardUnderMessage(long chatId, SendMessage message) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
@@ -148,15 +158,13 @@ public class FarmBot extends TelegramLongPollingBot {
         message.setReplyMarkup(inlineKeyboardMarkup);
     }
 
-    // Метод, возвращающий имя бота
     @Override
     public String getBotUsername() {
         return PropertiesUtil.get(BOT_USERNAME);
     }
 
-    // Метод, возвращающий токен бота
     @Override
     public String getBotToken() {
-        return PropertiesUtil.get(BOT_TOKEN); // Замените на токен вашего бота
+        return PropertiesUtil.get(BOT_TOKEN);
     }
 }

@@ -17,8 +17,10 @@ public final class PropertiesUtil {
     }
 
     private static void loadBotProperties() {
-        try (InputStream inputStream = PropertiesUtil.class.getClassLoader().getResourceAsStream("bot.properties")) {
-            PROPERTIES.load(inputStream);
+        try (InputStream inputStreamBot = PropertiesUtil.class.getClassLoader().getResourceAsStream("bot.properties");
+                InputStream inputStreamDB = PropertiesUtil.class.getClassLoader().getResourceAsStream("bot.properties")) {
+            PROPERTIES.load(inputStreamBot);
+            PROPERTIES.load(inputStreamDB);
 
         } catch (IOException e) {
             throw new RuntimeException(e);

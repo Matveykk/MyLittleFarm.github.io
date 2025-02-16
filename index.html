@@ -205,8 +205,9 @@
                 // Сбрасываем таймер
                 timer = 10;
 
+                // Отправляем данные в Telegram Bot
                 let tg = window.Telegram.WebApp;
-                tg.sendData(carrotCount)
+                tg.sendData(JSON.stringify({ carrots: carrotCount })); // Отправляем данные в формате JSON
             }
         }, 1000);
     });
