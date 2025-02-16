@@ -3,19 +3,13 @@ package botClient;
 import DataBaseWork.WorkWithDB;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.webapp.WebAppData;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import resourcesUtil.PropertiesUtil;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-// Основной класс бота
 public class FarmBot extends TelegramLongPollingBot {
 
     private static final String BOT_TOKEN = "bot.token";
@@ -39,32 +33,10 @@ public class FarmBot extends TelegramLongPollingBot {
             }
         }
 
-        if (update.hasCallbackQuery()) {
-            long chatId = update.getCallbackQuery().getMessage().getChatId();
-            String callbackData = update.getCallbackQuery().getData();
-
-            if (callbackData.equals("START_BUTTON")) {
-                sendMessage(chatId);
-            } else if (callbackData.equals("HELP_BUTTON")) {
-                sendHelpMessage(chatId);
-            } else if (callbackData.equals("APP_BUTTON")) {
-                // Ничего
-            }
-        }
-
         // Обработка данных из веб-приложения
-        if (update.hasMessage() && update.getMessage().getWebAppData() != null) {
-            String webAppData = update.getMessage().getWebAppData().getData(); // Получаем данные
-            long chatId = update.getMessage().getChatId();
-
-            // Обработка данных (пример: парсим JSON)
-            try {
-                // Предположим, что данные приходят в формате JSON: {"carrots": 5}
-                int carrotCount = Integer.parseInt(webAppData.split(":")[1].replace("}", "").trim());
-                sendMessage(chatId, "Вы вырастили " + carrotCount + " морковок!");
-            } catch (Exception e) {
-                sendMessage(chatId, "Ошибка обработки данных: " + e.getMessage());
-            }
+        if (update.getMessage().getWebAppData() != null) {
+            WebAppData webAppData = update.getMessage().getWebAppData();
+            System.out.println(webAppData.getData() + " Data");
         }
     }
 
@@ -72,7 +44,6 @@ public class FarmBot extends TelegramLongPollingBot {
     private void sendMessage(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        setKeyboardUnderMessage(chatId, message);
 
         Random random = new Random();
         String[] Answers = {"Hello! Let's plant\nIf you need some - /help\nOne more message - /start",
@@ -91,7 +62,6 @@ public class FarmBot extends TelegramLongPollingBot {
     private void sendHelpMessage(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        setKeyboardUnderMessage(chatId, message);
         message.setText("In process...");
 
         try {
@@ -125,37 +95,6 @@ public class FarmBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-    }
-
-    // Метод для создания клавиатуры под сообщением
-    private void setKeyboardUnderMessage(long chatId, SendMessage message) {
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        List<InlineKeyboardButton> row1 = new ArrayList<>();
-        List<InlineKeyboardButton> row2 = new ArrayList<>();
-
-        InlineKeyboardButton button1 = new InlineKeyboardButton();
-        InlineKeyboardButton button2 = new InlineKeyboardButton();
-        InlineKeyboardButton button3 = new InlineKeyboardButton();
-
-        button1.setText("Launch App");
-        button1.setUrl("t.me/my_little_farmm_bot/myLittleFarm");
-        button1.setCallbackData("APP_BUTTON");
-
-        button2.setText("/help");
-        button2.setCallbackData("HELP_BUTTON");
-
-        button3.setText("/start");
-        button3.setCallbackData("START_BUTTON");
-
-        row1.add(button3);
-        row1.add(button2);
-        row2.add(button1);
-        rows.add(row1);
-        rows.add(row2);
-
-        inlineKeyboardMarkup.setKeyboard(rows);
-        message.setReplyMarkup(inlineKeyboardMarkup);
     }
 
     @Override
