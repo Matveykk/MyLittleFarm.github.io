@@ -51,17 +51,10 @@ public class FarmBot extends TelegramLongPollingBot {
         }
 
         // Обработка данных из веб-приложения
-        if (update.getMessage().getWebAppData() != null) {
+        if (update.hasMessage() && update.getMessage().getWebAppData() != null) {
             WebAppData webAppData = update.getMessage().getWebAppData();
-            String data = webAppData.getData(); // Получаем данные
-
-            // Парсим JSON
-            Gson gson = new Gson();
-            WebAppPayload payload = gson.fromJson(data, WebAppPayload.class);
-
-            // Обрабатываем данные
-            int carrots = payload.getCarrots();
-            System.out.println("Количество морковок: " + carrots);
+            String jsonData = webAppData.getData();
+            processWebAppData(jsonData);
         }
     }
 
@@ -151,6 +144,16 @@ public class FarmBot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return PropertiesUtil.get(BOT_TOKEN);
+    }
+
+    private void processWebAppData(String jsonData) {
+        Gson gson = new Gson();
+        try {
+            WebAppPayload payload = gson.fromJson(jsonData, WebAppPayload.class);
+            System.out.println("Морковок собрано: " + payload.getCarrots());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static class WebAppPayload {

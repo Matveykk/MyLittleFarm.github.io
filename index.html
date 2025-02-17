@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <script src="https://telegram.org/js/telegram-web-app.js?56"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Интерактивные вкладки</title>
+    <title>Ферма</title>
     <style>
         /* Основные стили */
         body {
@@ -127,9 +127,7 @@
     </style>
 </head>
 <body>
-
 <div class="tabs">
-    <!-- Содержимое вкладок -->
     <div class="tab-content">
         <div id="tab1" class="tab-pane active">
             <h2>Ферма</h2>
@@ -147,78 +145,57 @@
             <p>Настройте приложение под свои нужды.</p>
         </div>
     </div>
-
-    <!-- Заголовки вкладок (теперь внизу) -->
     <div class="tab-header">
-        <button class="tab-button active" data-tab="tab1">Farm</button>
-        <button class="tab-button" data-tab="tab2">Storage</button>
-        <button class="tab-button" data-tab="tab3">Settings</button>
+        <button class="tab-button active" data-tab="tab1">Ферма</button>
+        <button class="tab-button" data-tab="tab2">Хранилище</button>
+        <button class="tab-button" data-tab="tab3">Настройки</button>
     </div>
 </div>
 
 <script>
-    // JavaScript для переключения вкладок
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabPanes = document.querySelectorAll('.tab-pane');
-
-    tabButtons.forEach(button => {
+    // Переключение вкладок
+    document.querySelectorAll('.tab-button').forEach(button => {
         button.addEventListener('click', () => {
-            // Убираем активный класс у всех кнопок и вкладок
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabPanes.forEach(pane => pane.classList.remove('active'));
-
-            // Добавляем активный класс к выбранной кнопке и вкладке
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
             button.classList.add('active');
-            const tabId = button.getAttribute('data-tab');
-            document.getElementById(tabId).classList.add('active');
+            document.getElementById(button.dataset.tab).classList.add('active');
         });
     });
 
-    // Логика для выращивания морковки
+    // Логика выращивания морковки
     const growButton = document.getElementById('growButton');
     const timerDisplay = document.getElementById('timer');
     const carrotCounter = document.getElementById('carrotCounter');
+    const webApp = window.Telegram.WebApp;
     let carrotCount = 0;
     let timer = 10;
     let intervalId = null;
-    const webApp = window.Telegram.WebApp;
-
-    function sendDataToBot() {
-        const data = { carrots: carrotCount };
-        webApp.sendData(JSON.stringify(data));  // Отправка данных в Telegram бота
-    }
 
     growButton.addEventListener('click', () => {
-        // Отключаем кнопку на время отсчета
         growButton.disabled = true;
         growButton.textContent = "Идёт выращивание...";
-
-        // Запускаем обратный отсчет
         intervalId = setInterval(() => {
             timer--;
             timerDisplay.textContent = `Осталось: ${timer} сек.`;
-
-            // Когда отсчет завершен
             if (timer <= 0) {
                 clearInterval(intervalId);
-                timerDisplay.textContent = "Морковка готова!";
                 growButton.textContent = "Вырастить морковку";
                 growButton.disabled = false;
-
-                // Увеличиваем счетчик морковок
+                timerDisplay.textContent = "Морковка готова!";
                 carrotCount++;
                 carrotCounter.textContent = `Морковок: ${carrotCount}`;
-
-                // Сбрасываем таймер
                 timer = 10;
 
-                // Отправляем данные в Telegram Bot
-                sendDataToBot();
+                // Отправка данных в бота
+                if (webApp) {
+                    webApp.sendData(JSON.stringify({carrots: carrotCount}));
+                } else {
+                    alert('Ошибка: Telegram WebApp не доступен');
+                }
             }
         }, 1000);
     });
 </script>
-
 </body>
 </html>
-
