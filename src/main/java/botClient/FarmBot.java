@@ -45,7 +45,7 @@ public class FarmBot extends TelegramLongPollingBot {
                 Gson gson = new Gson();
                 WebAppPayload payload = gson.fromJson(data, WebAppPayload.class);
 
-                // Обрабатываем данные
+                // Обрабатывае данные
                 int carrots = payload.getCarrots();
 
                 // Отправляем ответ пользователю
