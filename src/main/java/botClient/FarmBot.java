@@ -61,7 +61,7 @@ public class FarmBot extends TelegramLongPollingBot {
 
             // Обрабатываем данные
             int carrots = payload.getCarrots();
-            System.out.println(carrots);
+            System.out.println("Количество морковок: " + carrots);
         }
     }
 

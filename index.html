@@ -184,8 +184,8 @@
     const webApp = window.Telegram.WebApp;
 
     function sendDataToBot() {
-        const data = {carrots: carrotCount};
-        webApp.sendData(JSON.stringify(data));
+        const data = { carrots: carrotCount };
+        webApp.sendData(JSON.stringify(data));  // Отправка данных в Telegram бота
     }
 
     growButton.addEventListener('click', () => {
@@ -213,8 +213,7 @@
                 timer = 10;
 
                 // Отправляем данные в Telegram Bot
-                sendDataToBot()
-                console.log()
+                sendDataToBot();
             }
         }, 1000);
     });
@@ -222,3 +221,4 @@
 
 </body>
 </html>
+
