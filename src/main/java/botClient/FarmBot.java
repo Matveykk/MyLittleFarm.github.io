@@ -8,12 +8,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.webapp.WebAppData;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import resourcesUtil.PropertiesUtil;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.webapp.WebAppData;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import com.google.gson.Gson;
 
 import java.util.Random;
 
@@ -127,14 +121,5 @@ public class FarmBot extends TelegramLongPollingBot {
         @Override
         public String getBotToken () {
             return PropertiesUtil.get(BOT_TOKEN);
-        }
-
-        private static class WebAppPayload {
-            private int carrots;
-            private long userId;
-
-            public int getCarrots() {
-                return carrots;
-            }
         }
     }
