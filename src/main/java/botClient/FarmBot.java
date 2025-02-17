@@ -54,7 +54,8 @@ public class FarmBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().getWebAppData() != null) {
             WebAppData webAppData = update.getMessage().getWebAppData();
             String jsonData = webAppData.getData();
-            processWebAppData(jsonData);
+            System.out.println("Получены данные WebApp: " + jsonData);  // Логируем полученные данные
+            processWebAppData(jsonData);  // Обрабатываем данные
         }
     }
 
@@ -147,12 +148,16 @@ public class FarmBot extends TelegramLongPollingBot {
     }
 
     private void processWebAppData(String jsonData) {
-        Gson gson = new Gson();
-        try {
-            WebAppPayload payload = gson.fromJson(jsonData, WebAppPayload.class);
-            System.out.println("Морковок собрано: " + payload.getCarrots());
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (jsonData != null && !jsonData.isEmpty()) {
+            Gson gson = new Gson();
+            try {
+                WebAppPayload payload = gson.fromJson(jsonData, WebAppPayload.class);
+                System.out.println("Морковок собрано: " + payload.getCarrots());
+            } catch (Exception e) {
+                System.out.println("Ошибка при обработке JSON данных: " + e.getMessage());
+            }
+        } else {
+            System.out.println("Полученные данные пустые или отсутствуют.");
         }
     }
 
