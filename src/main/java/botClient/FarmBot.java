@@ -55,34 +55,34 @@ public class FarmBot extends TelegramLongPollingBot {
             WebAppData webAppData = update.getMessage().getWebAppData();
             String data = webAppData.getData(); // Получаем данные
 
-                // Парсим JSON
-                Gson gson = new Gson();
-                WebAppPayload payload = gson.fromJson(data, WebAppPayload.class);
+            // Парсим JSON
+            Gson gson = new Gson();
+            WebAppPayload payload = gson.fromJson(data, WebAppPayload.class);
 
-                // Обрабатываем данные
-                int carrots = payload.getCarrots();
-                System.out.println(carrots);
+            // Обрабатываем данные
+            int carrots = payload.getCarrots();
+            System.out.println(carrots);
         }
     }
 
-        // Метод для отправки приветственного сообщения
-        private void sendMessage ( long chatId){
-            SendMessage message = new SendMessage();
-            message.setChatId(String.valueOf(chatId));
-            setKeyboardUnderMessage(message);
+    // Метод для отправки приветственного сообщения
+    private void sendMessage(long chatId) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        setKeyboardUnderMessage(message);
 
-            Random random = new Random();
-            String[] Answers = {"Hello! Let's plant\nIf you need some - /help\nOne more message - /start",
-                    "Welcome to the Farm!\nIf you need some - /help\nOne more message - /start",
-                    "Hello! Let's farm some wheat\nIf you need some - /help\nOne more message - /start"};
-            message.setText(Answers[random.nextInt(Answers.length)]);
+        Random random = new Random();
+        String[] Answers = {"Hello! Let's plant\nIf you need some - /help\nOne more message - /start",
+                "Welcome to the Farm!\nIf you need some - /help\nOne more message - /start",
+                "Hello! Let's farm some wheat\nIf you need some - /help\nOne more message - /start"};
+        message.setText(Answers[random.nextInt(Answers.length)]);
 
-            try {
-                execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
+    }
 
     private void setKeyboardUnderMessage(SendMessage message) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
@@ -115,73 +115,72 @@ public class FarmBot extends TelegramLongPollingBot {
         message.setReplyMarkup(inlineKeyboardMarkup);
     }
 
-        // Метод для отправки сообщения с помощью
-        private void sendHelpMessage ( long chatId){
-            SendMessage message = new SendMessage();
-            message.setChatId(String.valueOf(chatId));
-            setKeyboardUnderMessage(message);
-            message.setText("In process...");
+    // Метод для отправки сообщения с помощью
+    private void sendHelpMessage(long chatId) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        setKeyboardUnderMessage(message);
+        message.setText("In process...");
 
-            try {
-                execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Метод для отправки сообщения по умолчанию (если команда не распознана)
-        private void sendDefaultMessage ( long chatId){
-            SendMessage message = new SendMessage();
-            message.setChatId(String.valueOf(chatId));
-            setKeyboardUnderMessage(message);
-            message.setText("Я не понимаю эту команду. Используйте \"Помощь\"");
-
-            try {
-                execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public String getBotUsername () {
-            return PropertiesUtil.get(BOT_USERNAME);
-        }
-
-        @Override
-        public String getBotToken () {
-            return PropertiesUtil.get(BOT_TOKEN);
-        }
-
-        private static class WebAppPayload {
-            private String action;
-            private long userId;
-            private int carrots;
-
-            // Геттеры и сеттеры
-            public String getAction() {
-                return action;
-            }
-
-            public void setAction(String action) {
-                this.action = action;
-            }
-
-            public long getUserId() {
-                return userId;
-            }
-
-            public void setUserId(long userId) {
-                this.userId = userId;
-            }
-
-            public int getCarrots() {
-                return carrots;
-            }
-
-            public void setCarrots(int carrots) {
-                this.carrots = carrots;
-            }
-        }
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
+
+    // Метод для отправки сообщения по умолчанию (если команда не распознана)
+    private void sendDefaultMessage(long chatId) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        setKeyboardUnderMessage(message);
+        message.setText("Я не понимаю эту команду. Используйте \"Помощь\"");
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String getBotUsername() {
+        return PropertiesUtil.get(BOT_USERNAME);
+    }
+
+    @Override
+    public String getBotToken() {
+        return PropertiesUtil.get(BOT_TOKEN);
+    }
+
+    private static class WebAppPayload {
+        private String action;
+        private long userId;
+        private int carrots;
+
+        // Геттеры и сеттеры
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+
+        public long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(long userId) {
+            this.userId = userId;
+        }
+
+        public int getCarrots() {
+            return carrots;
+        }
+
+        public void setCarrots(int carrots) {
+            this.carrots = carrots;
+        }
+    }
+}
