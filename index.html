@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Интерактивные вкладки</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         /* Основные стили */
         body {
@@ -155,7 +156,6 @@
     </div>
 </div>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
     // JavaScript для переключения вкладок
     const tabButtons = document.querySelectorAll('.tab-button');
@@ -181,6 +181,13 @@
     let carrotCount = 0;
     let timer = 10;
     let intervalId = null;
+    const webApp = Telegram.WebApp;
+    webApp.ready;
+
+    function sendDataToBot() {
+        const data = {carrots: carrotCount};
+        webApp.sendData(JSON.stringify(data));
+    }
 
     growButton.addEventListener('click', () => {
         // Отключаем кнопку на время отсчета
@@ -207,9 +214,6 @@
                 timer = 10;
 
                 // Отправляем данные в Telegram Bot
-                let tg = window.Telegram.WebApp;
-                tg.sendData(JSON.stringify({carrots: carrotCount})); // Отправляем данные в формате JSON
-                console.log("Data sent successfully")
             }
         }, 1000);
     });
