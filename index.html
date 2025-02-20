@@ -178,7 +178,6 @@
         }
     }
 
-
     // Логика выращивания морковки
     const growButton = document.getElementById('growButton');
     const timerDisplay = document.getElementById('timer');
@@ -188,17 +187,29 @@
     let intervalId = null;
 
     // Функция для отправки данных на сервер
-    function sendDataToBack() {
+    async function sendDataToBack() {
         const data = {
-            carrots: carrotCount
+            carrots: carrotCount // Убедитесь, что это число
         };
-        return fetch('http://localhost:8080/api/endpoint', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
+        console.log('Отправляемые данные на сервер:', JSON.stringify(data)); // Логируем данные перед отправкой
+        try {
+            const response = await fetch('http://localhost:8080/api/endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const responseData = await response.json();
+            console.log('Response from server:', responseData);
+            return responseData.carrots; // Возвращаем обновленное количество морковок
+        } catch (error) {
+            console.error('Ошибка при отправке данных на сервер:', error);
+            throw error; // Пробрасываем ошибку дальше
+        }
     }
 
     // Загружаем данные с сервера при запуске
@@ -224,16 +235,10 @@
 
                 // Отправка данных на сервер
                 try {
-                    const response = await sendDataToBack();
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    console.log('Success:', data);
-                    carrotCount = data.carrots; // Обновляем количество морковок
+                    carrotCount = await sendDataToBack(); // Обновляем количество морковок с сервера
                     carrotCounter.textContent = `Морковок: ${carrotCount}`;
                 } catch (error) {
-                    console.error('Error:', error);
+                    console.error('Не удалось обновить данные на сервере.');
                 }
             }
         }, 1000);

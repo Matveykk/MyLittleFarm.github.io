@@ -1,5 +1,7 @@
 package utils.json;
 
+import bot.FarmBot;
+import database.WorkWithDB;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,17 +12,23 @@ public class JsonUtil {
 
     @PostMapping("/endpoint")
     public ResponseEntity<MyData> handleJson(@RequestBody MyData myData) {
-        System.out.println("Received data: " + myData); // Логируем полученные данные
-        if (myData.getCarrots() == null) {
-            System.out.println("Bad request: carrots is null"); // Логируем ошибку
-            return ResponseEntity.badRequest().build();
+        System.out.println("Полученные данные на сервере: " + myData);
+
+        // Проверяем, что поле carrots не null
+        if (myData.getCarrots() == null || myData.getCarrots() < 0) {
+            System.out.println("Ошибка: параметр carrots некорректен.");
+            return ResponseEntity.badRequest().body(new MyData(0)); // Возвращаем ответ с ошибкой
         }
-        MyData myData1 = new MyData(12);
-        return ResponseEntity.ok(myData1);
+        //Записываем в БД текущее количество морковок
+        WorkWithDB.updateCarrotCount(FarmBot.username, myData.getCarrots());
+        return ResponseEntity.ok(myData);
     }
 
+    // Класс для хранения данных
     public static class MyData {
         private Integer carrots; // Используем Integer для поддержки null
+
+        public MyData() {}
 
         public MyData(Integer carrots) {
             this.carrots = carrots;

@@ -1,5 +1,6 @@
 package bot;
 
+import database.WorkWithDB;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -16,6 +17,7 @@ public class FarmBot extends TelegramLongPollingBot {
 
     private static final String BOT_TOKEN = "bot.token";
     private static final String BOT_USERNAME = "bot.username";
+    public static String username;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -43,7 +45,10 @@ public class FarmBot extends TelegramLongPollingBot {
             } else if (callbackData.equals("HELP_BUTTON")) {
                 sendHelpMessage(chatId);
             } else if (callbackData.equals("APP_BUTTON")) {
-                //Ничего
+                if (!WorkWithDB.hasUsername(getUsername(update))) {
+                    WorkWithDB.addUser(getUsername(update), getName(update));
+                    username = getUsername(update);
+                }
             }
         }
     }
@@ -134,5 +139,13 @@ public class FarmBot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return PropertiesUtil.get(BOT_TOKEN);
+    }
+
+    public String getUsername(Update update) {
+        return update.getCallbackQuery().getFrom().getUserName();
+    }
+
+    public String getName(Update update) {
+        return update.getCallbackQuery().getFrom().getFirstName();
     }
 }

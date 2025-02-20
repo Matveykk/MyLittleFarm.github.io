@@ -1,5 +1,7 @@
 package utils.json;
 
+import bot.FarmBot;
+import database.WorkWithDB;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +15,7 @@ public class StarterJson {
     public MyData getData() {
         // Создаем объект с данными
         MyData data = new MyData();
-        data.setCarrots(3); //todo запрос в бд на количество морковок по юзернэйму
+        data.setCarrots(WorkWithDB.getUserCarrots(FarmBot.username));
         return data; // Spring Boot автоматически преобразует объект в JSON
     }
 
