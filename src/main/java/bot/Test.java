@@ -1,6 +1,4 @@
-package botClient;
-
-import java.util.Random;
+package bot;
 
 public class Test {
     public static void main(String[] args) {

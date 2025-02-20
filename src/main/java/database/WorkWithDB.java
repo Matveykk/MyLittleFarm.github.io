@@ -1,5 +1,6 @@
-package DataBaseWork;
+package database;
 
+import utils.database.ConnectionManager;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

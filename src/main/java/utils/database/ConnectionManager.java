@@ -1,6 +1,5 @@
-package DataBaseWork;
+package utils.database;
 
-import resourcesUtil.PropertiesUtil;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

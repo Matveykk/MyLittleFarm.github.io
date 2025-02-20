@@ -1,15 +1,12 @@
-package botClient;
+package bot;
 
-import DataBaseWork.WorkWithDB;
-import com.google.gson.Gson;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.webapp.WebAppData;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import resourcesUtil.PropertiesUtil;
+import utils.database.PropertiesUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,14 +45,6 @@ public class FarmBot extends TelegramLongPollingBot {
             } else if (callbackData.equals("APP_BUTTON")) {
                 //Ничего
             }
-        }
-
-        // Обработка данных из веб-приложения
-        if (update.hasMessage() && update.getMessage().getWebAppData() != null) {
-            WebAppData webAppData = update.getMessage().getWebAppData();
-            String jsonData = webAppData.getData();
-            System.out.println("Получены данные WebApp: " + jsonData);  // Логируем полученные данные
-            processWebAppData(jsonData);  // Обрабатываем данные
         }
     }
 
@@ -145,50 +134,5 @@ public class FarmBot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return PropertiesUtil.get(BOT_TOKEN);
-    }
-
-    private void processWebAppData(String jsonData) {
-        if (jsonData != null && !jsonData.isEmpty()) {
-            Gson gson = new Gson();
-            try {
-                WebAppPayload payload = gson.fromJson(jsonData, WebAppPayload.class);
-                System.out.println("Морковок собрано: " + payload.getCarrots());
-            } catch (Exception e) {
-                System.out.println("Ошибка при обработке JSON данных: " + e.getMessage());
-            }
-        } else {
-            System.out.println("Полученные данные пустые или отсутствуют.");
-        }
-    }
-
-    private static class WebAppPayload {
-        private String action;
-        private long userId;
-        private int carrots;
-
-        // Геттеры и сеттеры
-        public String getAction() {
-            return action;
-        }
-
-        public void setAction(String action) {
-            this.action = action;
-        }
-
-        public long getUserId() {
-            return userId;
-        }
-
-        public void setUserId(long userId) {
-            this.userId = userId;
-        }
-
-        public int getCarrots() {
-            return carrots;
-        }
-
-        public void setCarrots(int carrots) {
-            this.carrots = carrots;
-        }
     }
 }

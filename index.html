@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ферма</title>
@@ -132,7 +131,7 @@
         <div id="tab1" class="tab-pane active">
             <h2>Ферма</h2>
             <p>Нажмите кнопку, чтобы вырастить морковку!</p>
-            <button onclick="sendDataToBot()" class="carrot-button" id="growButton">Вырастить морковку</button>
+            <button class="carrot-button" id="growButton">Вырастить морковку</button>
             <div class="timer" id="timer">Осталось: 10 сек.</div>
         </div>
         <div id="tab2" class="tab-pane">
@@ -163,29 +162,55 @@
         });
     });
 
+    // Функция для получения данных с сервера
+    async function startData() {
+        try {
+            const response = await fetch('http://localhost:8080/api/data');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log('Data received:', data);
+            return data.carrots;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return 0;
+        }
+    }
+
+
     // Логика выращивания морковки
     const growButton = document.getElementById('growButton');
     const timerDisplay = document.getElementById('timer');
     const carrotCounter = document.getElementById('carrotCounter');
-    const webApp = window.Telegram.WebApp;
-    let carrotCount = 0;
+    let carrotCount = 0; // Инициализируем переменную
     let timer = 10;
     let intervalId = null;
 
-    function sendDataToBot() {
-        const data = { message: "Привет от WebApp!" };
-        console.log("Отправляем данные в Telegram бот:", JSON.stringify(data));
-        if (window.Telegram.WebApp) {
-            window.Telegram.WebApp.sendData(JSON.stringify(data)); // Отправка данных в бота
-        } else {
-            console.error("Telegram WebApp не доступен.");
-        }
+    // Функция для отправки данных на сервер
+    function sendDataToBack() {
+        const data = {
+            carrots: carrotCount
+        };
+        return fetch('http://localhost:8080/api/endpoint', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
     }
 
-    growButton.addEventListener('click', () => {
+    // Загружаем данные с сервера при запуске
+    startData().then(count => {
+        carrotCount = count;
+        carrotCounter.textContent = `Морковок: ${carrotCount}`;
+    });
+
+    growButton.addEventListener('click', async () => {
         growButton.disabled = true;
         growButton.textContent = "Идёт выращивание...";
-        intervalId = setInterval(() => {
+        intervalId = setInterval(async () => {
             timer--;
             timerDisplay.textContent = `Осталось: ${timer} сек.`;
             if (timer <= 0) {
@@ -197,8 +222,19 @@
                 carrotCounter.textContent = `Морковок: ${carrotCount}`;
                 timer = 10;
 
-                // Отправка данных в бота
-
+                // Отправка данных на сервер
+                try {
+                    const response = await sendDataToBack();
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    console.log('Success:', data);
+                    carrotCount = data.carrots; // Обновляем количество морковок
+                    carrotCounter.textContent = `Морковок: ${carrotCount}`;
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             }
         }, 1000);
     });
