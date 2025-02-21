@@ -22,7 +22,7 @@ public class WorkWithDB {
     public static boolean hasUsername(String username) {
 
         String sql = "SELECT * " +
-                "FROM userdata " +
+                "FROM users_data " +
                 "WHERE username='" + username + "'";
         String hasStr = null;
 

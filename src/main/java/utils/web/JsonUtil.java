@@ -1,14 +1,15 @@
-package utils.json;
+package utils.web;
 
 import bot.FarmBot;
 import database.WorkWithDB;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:63342") // Разрешаем запросы с этого домена
 @RestController
 @RequestMapping("/api")
 public class JsonUtil {
+
+    private String username;
 
     @PostMapping("/endpoint")
     public ResponseEntity<MyData> handleJson(@RequestBody MyData myData) {
@@ -20,8 +21,17 @@ public class JsonUtil {
             return ResponseEntity.badRequest().body(new MyData(0)); // Возвращаем ответ с ошибкой
         }
         //Записываем в БД текущее количество морковок
+        System.out.println("handle: " + FarmBot.username + " " + myData.getCarrots());
         WorkWithDB.updateCarrotCount(FarmBot.username, myData.getCarrots());
         return ResponseEntity.ok(myData);
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     // Класс для хранения данных

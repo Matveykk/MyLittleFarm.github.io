@@ -18,7 +18,7 @@ public final class PropertiesUtil {
 
     private static void loadBotProperties() {
         try (InputStream inputStreamBot = PropertiesUtil.class.getClassLoader().getResourceAsStream("bot.properties");
-                InputStream inputStreamDB = PropertiesUtil.class.getClassLoader().getResourceAsStream("bot.properties")) {
+                InputStream inputStreamDB = PropertiesUtil.class.getClassLoader().getResourceAsStream("database.properties")) {
             PROPERTIES.load(inputStreamBot);
             PROPERTIES.load(inputStreamDB);
 

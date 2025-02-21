@@ -9,9 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import utils.database.PropertiesUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class FarmBot extends TelegramLongPollingBot {
 
@@ -21,10 +19,14 @@ public class FarmBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+
+        if(username == null) {
+            username = update.getChatMember().getFrom().getUserName();
+        }
+
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-
             switch (messageText) {
                 case "/start":
                     sendMessage(chatId);
@@ -47,8 +49,9 @@ public class FarmBot extends TelegramLongPollingBot {
             } else if (callbackData.equals("APP_BUTTON")) {
                 if (!WorkWithDB.hasUsername(getUsername(update))) {
                     WorkWithDB.addUser(getUsername(update), getName(update));
-                    username = getUsername(update);
                 }
+                System.out.println(username);
+                sendAppMessage(chatId);
             }
         }
     }
@@ -83,8 +86,8 @@ public class FarmBot extends TelegramLongPollingBot {
         InlineKeyboardButton button3 = new InlineKeyboardButton();
 
         button1.setText("Launch App");
-        button1.setUrl("https://matveykk.github.io/MyLittleFarm.github.io/");
-        button1.setUrl("t.me/my_little_farmm_bot/myLittleFarm");
+//        button1.setUrl("https://matveykk.github.io/MyLittleFarm.github.io/");
+//        button1.setUrl("t.me/my_little_farmm_bot/myLittleFarm");
         button1.setCallbackData("APP_BUTTON");
 
         button2.setText("/help");
@@ -123,6 +126,20 @@ public class FarmBot extends TelegramLongPollingBot {
         message.setChatId(String.valueOf(chatId));
         setKeyboardUnderMessage(message);
         message.setText("Я не понимаю эту команду. Используйте \"Помощь\"");
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendAppMessage(long chatId) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        setKeyboardUnderMessage(message);
+        message.setText("Let's start farm\\!\\:\n[Open farm](t.me/my_little_farmm_bot/myLittleFarm)");
+        message.setParseMode("MarkdownV2");
 
         try {
             execute(message);
