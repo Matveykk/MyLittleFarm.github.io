@@ -1,6 +1,5 @@
 package utils.web;
 
-import bot.FarmBot;
 import database.WorkWithDB;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +12,13 @@ public class StarterJson {
     public MyData getData() {
         // Создаем объект с данными
         MyData data = new MyData();
-        System.out.println("getData: " + FarmBot.username);
-        data.setCarrots(WorkWithDB.getUserCarrots(FarmBot.username));
+
+        while (CurrUser.username == null) {
+            System.out.println("wait for username");
+        }
+
+        System.out.println("getData: " + CurrUser.username);
+        data.setCarrots(WorkWithDB.getUserCarrots(CurrUser.username));
         return data; // Spring Boot автоматически преобразует объект в JSON
     }
 

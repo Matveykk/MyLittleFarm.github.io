@@ -3,11 +3,13 @@ package bot;
 import database.WorkWithDB;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import utils.database.PropertiesUtil;
+import utils.web.CurrUser;
 
 import java.util.*;
 
@@ -19,10 +21,6 @@ public class FarmBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-
-        if(username == null) {
-            username = update.getChatMember().getFrom().getUserName();
-        }
 
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
@@ -40,15 +38,22 @@ public class FarmBot extends TelegramLongPollingBot {
         }
 
         if (update.hasCallbackQuery()) {
-            long chatId = update.getCallbackQuery().getMessage().getChatId();
-            String callbackData = update.getCallbackQuery().getData();
+            CallbackQuery callbackQuery = update.getCallbackQuery();
+            long chatId = callbackQuery.getMessage().getChatId();
+            String callbackData = callbackQuery.getData();
             if (callbackData.equals("START_BUTTON")) {
                 sendMessage(chatId);
             } else if (callbackData.equals("HELP_BUTTON")) {
                 sendHelpMessage(chatId);
             } else if (callbackData.equals("APP_BUTTON")) {
-                if (!WorkWithDB.hasUsername(getUsername(update))) {
-                    WorkWithDB.addUser(getUsername(update), getName(update));
+                if(username == null) {
+                    username = getUsername(callbackQuery);
+                }
+                if (!WorkWithDB.hasUsername(getUsername(callbackQuery))) {
+                    WorkWithDB.addUser(getUsername(callbackQuery), getName(callbackQuery));
+                }
+                if(CurrUser.username == null) {
+                    CurrUser.username = username;
                 }
                 System.out.println(username);
                 sendAppMessage(chatId);
@@ -158,11 +163,11 @@ public class FarmBot extends TelegramLongPollingBot {
         return PropertiesUtil.get(BOT_TOKEN);
     }
 
-    public String getUsername(Update update) {
-        return update.getCallbackQuery().getFrom().getUserName();
+    public String getUsername(CallbackQuery callbackQuery) {
+        return callbackQuery.getFrom().getUserName();
     }
 
-    public String getName(Update update) {
-        return update.getCallbackQuery().getFrom().getFirstName();
+    public String getName(CallbackQuery callbackQuery) {
+        return callbackQuery.getFrom().getFirstName();
     }
 }
